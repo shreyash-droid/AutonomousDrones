@@ -1,0 +1,99 @@
+# =====================================================================
+#  AI-Weed-Detection - files that should NOT go to GitHub
+# =====================================================================
+
+# ---------------------------------------------------------------- Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---------------------------------------------------------------- Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# ---------------------------------------------------------------- Node / Next.js dashboard
+node_modules/
+.next/
+out/
+dashboard/next-env.d.ts
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ---------------------------------------------------------------- Secrets / local settings
+.env
+.env.*
+!.env.example
+.claude/
+
+# ---------------------------------------------------------------- Jupyter
+.ipynb_checkpoints/
+
+# ---------------------------------------------------------------- Model weights
+# Weights are ignored everywhere EXCEPT the deployed model the project needs to run
+# (models/best.pt, ~19 MB - well under GitHub's 100 MB file limit).
+*.pt
+*.pth
+*.onnx
+*.engine
+*.torchscript
+*.weights
+*_ncnn_model/
+!models/best.pt
+
+# ---------------------------------------------------------------- Datasets (download them instead)
+/dataset/
+/datasets/
+/data/
+weed_dataset/
+weed_yolo/
+merged_yolo/
+tihan_raw/
+*.zip
+*.tar
+*.tar.gz
+# NOTE: simulation/web/data/ (offline demo recording) and drone_data/ ARE committed
+
+# ---------------------------------------------------------------- Generated outputs
+# re-create with:  python src/batch_detect.py  |  python -m drone.main --mode sim
+runs/
+results/
+predictions/
+debug_predictions/
+logs/
+detections.csv
+*_debug.jpg
+*.waypoints
+tests/_tmp*
+
+# ---------------------------------------------------------------- Logs / experiment tracking
+*.log
+*.cache
+wandb/
+mlruns/
+
+# ---------------------------------------------------------------- IDE / editor
+.vscode/
+.idea/
+*.suo
+*.user
+*.swp
+
+# ---------------------------------------------------------------- OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------------------------------------------- Build / packaging
+build/
+dist/
+*.egg-info/
+.coverage
+htmlcov/

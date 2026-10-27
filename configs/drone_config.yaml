@@ -1,0 +1,91 @@
+# =====================================================================
+#  Autonomous Weed Detection & Spot-Spraying Drone - master configuration
+#  The SAME file drives all three run modes:
+#     sim       -> everything simulated (used by the web demo)
+#     sitl      -> ArduPilot SITL flight controller + simulated camera/sprayer
+#     hardware  -> real Pixhawk + Raspberry Pi camera + Arduino sprayer
+# =====================================================================
+
+mode: sim
+
+# ---------------------------------------------------------------- AI model
+detector:
+  model_path: models/best.pt        # on the Pi use models/best_ncnn_model (see hardware/export_model.py)
+  confidence: 0.25
+  iou: 0.7
+  image_size: 640
+  device: cpu                        # "cpu", "0" (CUDA / Jetson)
+  weed_classes: [weed]
+  crop_classes: [crop, panicle]     # panicle = rice head (TiHAN Paddy) - never sprayed
+
+# ---------------------------------------------------------------- Flight controller (Pixhawk / ArduPilot)
+flight_controller:
+  # hardware : Pixhawk TELEM2 -> Raspberry Pi UART  => /dev/serial0 @ 921600
+  # sitl     : ArduPilot SITL SERIAL1 (companion)   => tcp:127.0.0.1:5762
+  connection: /dev/serial0
+  baud: 921600
+  sitl_connection: tcp:127.0.0.1:5762
+  heartbeat_timeout_s: 30
+  acceptance_radius_m: 0.6           # waypoint reached when closer than this
+
+# ---------------------------------------------------------------- Camera (downward facing, nadir)
+camera:
+  type: picamera2                    # picamera2 | opencv
+  device_index: 0                    # for opencv/USB cameras
+  resolution: [1280, 960]
+  hfov_deg: 62.2                     # Raspberry Pi Camera Module v2
+  vfov_deg: 48.8
+  save_frames: true
+  frames_dir: logs/frames
+
+# ---------------------------------------------------------------- Sprayer
+sprayer:
+  type: serial                       # serial (Arduino) | gpio (Pi relay) | mavlink (Pixhawk relay)
+  port: /dev/ttyUSB0
+  baud: 115200
+  gpio_pin: 17                       # BCM pin, only for type: gpio
+  mavlink_relay: 0                   # relay number, only for type: mavlink
+  tank_capacity_ml: 2000
+  flow_rate_ml_s: 25                 # measured pump flow rate
+  spray_duration_ms: 600             # per weed cluster
+  crop_safety_margin_m: 0.15         # do not spray if a crop is this close to the weed
+
+# ---------------------------------------------------------------- Mission
+mission:
+  home: {lat: 22.975000, lon: 88.434000}    # demo coordinates - replace with your field
+  survey_altitude_m: 10
+  spray_altitude_m: 3
+  speed_m_s: 3.0
+  front_overlap: 0.0                 # 0..0.8, photo overlap along a lane
+  side_overlap: 0.0                  # 0..0.8, overlap between lanes
+  strategy: detect_and_spray         # detect_and_spray | survey_only
+  cluster_radius_m: 0.6              # weeds closer than this are sprayed with one shot
+  blanket_rate_l_ha: 300             # conventional boom spraying rate, used for savings report
+  # Field boundary in metres East/North of home (used when no GPS polygon given)
+  field_local_m: [[0, 0], [40, 0], [40, 30], [0, 30]]
+  # Optional GPS polygon [[lat, lon], ...] - overrides field_local_m when set
+  field_polygon_latlon: []
+
+# ---------------------------------------------------------------- Safety / failsafes
+safety:
+  min_battery_start_pct: 60
+  rtl_battery_pct: 25
+  geofence_margin_m: 8               # max distance outside the field boundary
+  max_altitude_m: 30
+  require_gps_fix: 3                 # 3 = 3D fix
+
+# ---------------------------------------------------------------- Telemetry to the Ground Control Station
+telemetry:
+  gcs_url: ws://192.168.1.10:8000/ws/drone   # laptop running simulation/server.py
+  rate_hz: 5
+  log_dir: logs
+
+# ---------------------------------------------------------------- Simulation only
+sim:
+  tiles_dir: drone_data/images
+  grid: [4, 3]                       # columns x rows of image tiles laid over the field
+  tile_size_m: 10                    # each image covers 10 m x 10 m on the ground
+  start_battery_pct: 100
+  battery_drain_pct_per_min: 3.5
+  gps_noise_m: 0.05
+  speedup: 4                         # simulation runs this many times faster than real time

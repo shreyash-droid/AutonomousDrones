@@ -1,0 +1,8 @@
+# Raspberry Pi companion computer (picamera2, gpiozero, opencv come from apt)
+ultralytics>=8.3
+ncnn
+pymavlink>=2.4.40
+pyserial>=3.5
+websockets>=12
+PyYAML
+numpy

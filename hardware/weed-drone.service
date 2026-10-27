@@ -1,0 +1,21 @@
+# systemd unit - installed by hardware/setup_raspberry_pi.sh
+# Starts the onboard software at boot. The mission itself only begins when
+# the safety pilot flips the RC flight-mode switch to GUIDED (see README) -
+# --autostart skips the keyboard prompt because the Pi runs headless.
+[Unit]
+Description=Autonomous weed detection & spraying drone
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__USER__
+WorkingDirectory=__PROJECT_DIR__
+ExecStartPre=/bin/sleep 10
+ExecStart=__PROJECT_DIR__/.venv/bin/python -m drone.main --mode hardware --autostart --wait-guided
+Restart=on-failure
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

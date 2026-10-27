@@ -1,0 +1,60 @@
+# ArduCopter 4.5 parameters for the weed-spraying drone
+# Load in Mission Planner: CONFIG -> Full Parameter List -> Load from file -> Write Params
+# (Calibrate accelerometer, compass, radio and ESCs FIRST with the setup wizard.)
+#
+# ---- Companion computer link (Pixhawk TELEM2 <-> Raspberry Pi UART) ----
+SERIAL2_PROTOCOL,2
+SERIAL2_BAUD,921
+# ---- Telemetry radio on TELEM1 for the safety pilot's GCS ----
+SERIAL1_PROTOCOL,2
+SERIAL1_BAUD,57
+# ---- Frame: quad X ----
+FRAME_CLASS,1
+FRAME_TYPE,1
+# ---- Battery monitor (analog power module, 4S LiPo) ----
+BATT_MONITOR,4
+BATT_CAPACITY,5200
+BATT_LOW_VOLT,14.4
+BATT_CRT_VOLT,14.0
+BATT_FS_LOW_ACT,2
+BATT_FS_CRT_ACT,1
+# ---- Failsafes ----
+# radio loss -> RTL
+FS_THR_ENABLE,1
+FS_THR_VALUE,975
+# GCS / companion heartbeat loss in GUIDED -> RTL
+FS_GCS_ENABLE,1
+FS_GCS_TIMEOUT,5
+# EKF failsafe -> land
+FS_EKF_ACTION,1
+# ---- Geofence: 150 m radius, 30 m ceiling, action RTL ----
+FENCE_ENABLE,1
+FENCE_TYPE,7
+FENCE_ALT_MAX,30
+FENCE_RADIUS,150
+FENCE_ACTION,1
+FENCE_MARGIN,3
+# ---- Navigation ----
+WPNAV_SPEED,300
+WPNAV_SPEED_UP,200
+WPNAV_SPEED_DN,150
+WPNAV_RADIUS,60
+WPNAV_ACCEL,150
+# keep the nose pointing north while surveying -> camera images are north-up
+WP_YAW_BEHAVIOR,0
+RTL_ALT,1200
+RTL_LOIT_TIME,2000
+LAND_SPEED,50
+# ---- Flight modes on RC channel 5 (3-position switch) ----
+FLTMODE_CH,5
+FLTMODE1,5
+FLTMODE3,4
+FLTMODE6,6
+# 5 = LOITER (manual hold), 4 = GUIDED (companion computer in control), 6 = RTL
+# ---- Pump relay (only if sprayer.type = mavlink) ----
+RELAY1_FUNCTION,1
+RELAY1_PIN,54
+# 54 = AUX OUT 5 on Pixhawk 2.4.8 (set SERVO13_FUNCTION,-1 to free the pin)
+SERVO13_FUNCTION,-1
+# ---- Arming ----
+ARMING_CHECK,1

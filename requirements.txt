@@ -1,0 +1,16 @@
+# Laptop / ground station / simulation  (Raspberry Pi: hardware/requirements-pi.txt)
+ultralytics>=8.3
+opencv-python
+pillow
+numpy
+pandas
+matplotlib
+PyYAML
+streamlit>=1.40
+# web Ground Control Station + simulator
+fastapi>=0.110
+uvicorn>=0.29
+websockets>=12
+# hardware / SITL drivers
+pymavlink>=2.4.40
+pyserial>=3.5
